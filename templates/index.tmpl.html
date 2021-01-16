@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+{{template "header.tmpl.html"}}
+
+<body>
+    <form class="row align-items-center" method="post" action="newAsset">
+        <div class="col-auto">
+            <label for="newTicker">代号</label>
+        </div>
+        <div class="col-auto">
+            <input class="form-control" type="text" name="ticker" placeholder="CNY" id="newTicker" required>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">发行</button>
+        </div>
+    </form>
+    {{ .assets }}
+</body>
+
+</html>
