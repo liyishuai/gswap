@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
-{{template "header.tmpl.html"}}
+
+<head>
+    {{template "header.tmpl.html"}}
+</head>
 
 <body>
     <form class="row align-items-center" method="post" action="newAsset">
@@ -14,7 +17,23 @@
             <button type="submit" class="btn btn-primary">发行</button>
         </div>
     </form>
-    {{ .assets }}
+    <form class="row align-items-center" method="post" action="removeAsset">
+        <div class="col-auto">
+            <label for="rmTicker">撤销</label>
+        </div>
+        <div class="col-auto">
+            <select class="form-select" id="rmTicker" name="ticker" required>
+                <option selected disabled value="">标的</option>
+                {{ range .assets }}
+                <option value="{{.Ticker}}">{{.Ticker}}</option>
+                {{ end }}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-danger">执行</button>
+        </div>
+    </form>
+    
 </body>
 
 </html>

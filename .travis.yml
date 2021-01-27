@@ -1,4 +1,5 @@
 language: go
-go:
-  - stable
-  - master
+go: stable
+os:
+  - linux
+  - osx

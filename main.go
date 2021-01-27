@@ -14,8 +14,7 @@ import (
 
 // Asset ...
 type Asset struct {
-	gorm.Model
-	Ticker string `gorm:"unique"`
+	Ticker string `gorm:"primaryKey;size:3"`
 }
 
 func main() {
@@ -33,8 +32,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening Gorm database: %q", err)
 	}
-	r := gin.New()
-	r.Use(gin.Logger())
+	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.tmpl.html")
 	r.GET("/", func(c *gin.Context) {
 		var assets []Asset
@@ -42,10 +40,22 @@ func main() {
 		c.HTML(http.StatusOK, "index.tmpl.html", gin.H{"assets": assets})
 	})
 	r.POST("/newAsset", func(c *gin.Context) {
-		db.Create(&Asset{Ticker: c.PostForm("ticker")})
-		var assets []Asset
-		db.Find(&assets)
-		c.HTML(http.StatusOK, "index.tmpl.html", gin.H{"assets": assets})
+		ticker := c.PostForm("ticker")
+		db.Create(&Asset{Ticker: ticker})
+		if db.Error != nil {
+			c.HTML(http.StatusBadRequest, "asset.tmpl.html", gin.H{"message": db.Error})
+		} else {
+			c.HTML(http.StatusOK, "asset.tmpl.html", gin.H{"message": "已发行" + ticker})
+		}
+	})
+	r.POST("/removeAsset", func(c *gin.Context) {
+		ticker := c.PostForm("ticker")
+		db.Delete(&Asset{}, "ticker = ?", ticker)
+		if db.Error != nil {
+			c.HTML(http.StatusBadRequest, "asset.tmpl.html", gin.H{"message": db.Error})
+		} else {
+			c.HTML(http.StatusOK, "asset.tmpl.html", gin.H{"message": "已撤销" + ticker})
+		}
 	})
 	r.Run(":" + port)
 }
