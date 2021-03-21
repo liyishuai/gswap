@@ -45,6 +45,14 @@ type Taker struct {
 	OrderID uint `form:"order"`
 }
 
+type Maker struct {
+	UserID     uint   `form:"user"`
+	BuyTicker  string `form:"buyTicker"`
+	BuyAmount  uint   `form:"buyAmount"`
+	SellTicker string `form:"sellTicker"`
+	SellAmount uint   `form:"sellAmount"`
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -87,8 +95,60 @@ func main() {
 			c.Status(http.StatusNoContent)
 		}
 	})
+	insufficientFund := errors.New("insufficient fund")
+	r.POST("/makeOrder", func(c *gin.Context) {
+		var maker Maker
+		if err := c.ShouldBind(&maker); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		} else if err := db.Transaction(func(tx *gorm.DB) error {
+			seller := Account{
+				UserID:      maker.UserID,
+				AssetTicker: maker.SellTicker,
+			}
+			if err := tx.Where(seller).Take(&seller).Error; err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					return insufficientFund
+				} else {
+					return err
+				}
+			} else if seller.Amount < maker.SellAmount {
+				return insufficientFund
+			} else {
+				buyer := Account{
+					UserID:      maker.UserID,
+					AssetTicker: maker.BuyTicker,
+				}
+				if err := db.Where(buyer).Take(&buyer).
+					Error; errors.Is(err, gorm.ErrRecordNotFound) {
+					if err := tx.Create(&buyer).Error; err != nil {
+						return err
+					}
+				} else if err != nil {
+					return err
+				}
+				seller.Amount -= maker.SellAmount
+				if err := tx.Save(&seller).Error; err != nil {
+					return err
+				} else {
+					return tx.Create(&Order{
+						Buyer:      buyer,
+						BuyAmount:  maker.BuyAmount,
+						Seller:     seller,
+						SellAmount: maker.SellAmount,
+					}).Error
+				}
+			}
+		}); err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{"error": err})
+			} else if errors.Is(err, insufficientFund) {
+				c.JSON(http.StatusPaymentRequired, gin.H{"error": err})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+			}
+		}
+	})
 	r.POST("/takeOrder", func(c *gin.Context) {
-		insufficientFund := errors.New("insufficient fund")
 		var taker Taker
 		if err := c.ShouldBind(&taker); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
@@ -123,14 +183,15 @@ func main() {
 						return err
 					}
 					sellTo.Amount += order.SellAmount
+					buyFrom.Amount -= order.BuyAmount
 					order.Buyer.Amount += order.BuyAmount
 					if err := tx.Save(&sellTo).Error; err != nil {
 						return err
-					} else if err :=
-						tx.Save(&order.Buyer).Error; err != nil {
+					} else if err := tx.Save(&buyFrom).Error; err != nil {
 						return err
-					} else if err :=
-						tx.Delete(&order).Error; err != nil {
+					} else if err := tx.Save(&order.Buyer).Error; err != nil {
+						return err
+					} else if err := tx.Delete(&order).Error; err != nil {
 						return err
 					} else {
 						return nil
