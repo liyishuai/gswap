@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    {{template "header.tmpl.html"}}
+    <meta http-equiv="refresh" content="5; url=/" />
+</head>
+
+<body>
+    <h1>撤单成功</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">流水号</th>
+                <th scope="col">买入</th>
+                <th scope="col">叫价</th>
+                <th scope="col">卖出</th>
+                <th scope="col">出价</th>
+                <th scope="col">挂单时间</th>
+                <th scope="col">撤单时间</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .order }}
+            <tr>
+                <th scope="row">{{ .Model.ID }}</td>
+                <td>{{ .Buyer.AssetTicker }}</td>
+                <td>{{ .BuyAmount }}</td>
+                <td>{{ .Seller.AssetTicker }}</td>
+                <td>{{ .SellAmount }}</td>
+                <td>{{ .Model.CreatedAt }}</td>
+                <td>{{ .Model.DeletedAt }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+</body>
+
+</html>
