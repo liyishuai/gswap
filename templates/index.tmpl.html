@@ -8,17 +8,152 @@
 <body>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="nav-asset-tab" data-bs-toggle="tab" data-bs-target="#nav-asset"
-                type="button" role="tab" aria-controls="nav-asset" aria-selected="true">标的</button>
-            <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-user" type="button"
-                role="tab" aria-controls="nav-user" aria-selected="false">用户</button>
+            <button class="nav-link active" id="nav-order-tab" data-bs-toggle="tab" data-bs-target="#nav-order"
+                type="button" role="tab" aria-controls="nav-order" aria-selected="true">订单</button>
             <button class="nav-link" id="nav-transfer-tab" data-bs-toggle="tab" data-bs-target="#nav-transfer"
                 type="button" role="tab" aria-controls="nav-transfer" aria-selected="false">动账</button>
+            <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-user" type="button"
+                role="tab" aria-controls="nav-user" aria-selected="false">用户</button>
+            <button class="nav-link" id="nav-asset-tab" data-bs-toggle="tab" data-bs-target="#nav-asset" type="button"
+                role="tab" aria-controls="nav-asset" aria-selected="false">标的</button>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="nav-asset" role="tabpanel" aria-labelledby="nav-asset-tab">
-            <form class="row align-items-center" method="post" action="newAsset">
+        <div class="tab-pane fade show active" id="nav-order" role="tabpanel" aria-labelledby="nav-order-tab">
+            <form method="POST">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="orderUser">用户</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="orderUser" name="user" required>
+                            <option selected disabled value="">名称</option>
+                            {{ range .users }}
+                            <option value="{{.Model.ID}}">{{.Name}}</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                </div>
+                <table class="table" style="width: auto;">
+                    <thead>
+                        <tr>
+                            <th scope="col">买入</th>
+                            <th scope="col">叫价</th>
+                            <th scope="col">卖出</th>
+                            <th scope="col">出价</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><select class="form-select" id="buyTicker" name="buyTicker">
+                                    <option selected disabled value="">代号</option>
+                                    {{ range .assets }}
+                                    <option value="{{.Ticker}}">{{.Ticker}}</option>
+                                    {{ end }}
+                                </select></td>
+                            <td><input type="number" class="form-control" id="buyAmount" placeholder="100"
+                                    name="buyAmount"></td>
+                            <td><select class="form-select" id="sellTicker" name="sellTicker">
+                                    <option selected disabled value="">代号</option>
+                                    {{ range .assets }}
+                                    <option value="{{.Ticker}}">{{.Ticker}}</option>
+                                    {{ end }}
+                                </select></td>
+                            <td><input type="number" class="form-control" id="sellAmount" placeholder="100"
+                                    name="sellAmount"></td>
+                            <td><button type="submit" formaction="/makeOrder" class="btn btn-primary">挂单</button></td>
+                        </tr>
+                        {{ range .orders }}
+                        <tr>
+                            <td>{{ .Buyer.AssetTicker }}</td>
+                            <td>{{ .BuyAmount }}</td>
+                            <td>{{ .Seller.AssetTicker }}</td>
+                            <td>{{ .SellAmount }}</td>
+                            <td>
+                                <button type="submit" formaction="/takeOrder" name="order" value="{{ .Model.ID }}"
+                                    class="btn btn-secondary">吃单</button>
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="nav-transfer" role="tabpanel" aria-labelledby="nav-transfer-tab">
+            <form method="POST">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="transferUser">用户</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="transferUser" name="user" required>
+                            <option selected disabled value="">名称</option>
+                            {{ range .users }}
+                            <option value="{{.Model.ID}}">{{.Name}}</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="transferTicker">资产</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" id="transferTicker" name="ticker" required>
+                            <option selected disabled value="">代号</option>
+                            {{ range .assets }}
+                            <option value="{{.Ticker}}">{{.Ticker}}</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <label for="transferAmount">数额</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" class="form-control" id="transferAmount" placeholder="100" name="amount"
+                            required>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <button type="submit" formaction="/deposit" class="btn btn-primary">入金</button>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" formaction="/withdraw" class="btn btn-secondary">提现</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="nav-user" role="tabpanel" aria-labelledby="nav-user-tab">
+            <form class="row align-items-center" method="post" action="/newUser">
+                <div class="col-auto">
+                    <label for="newUser">户名</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="text" name="name" placeholder="user" id="newUser" required>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success">开户</button>
+                </div>
+            </form>
+            <form action="/listAccount">
+                {{ range .users }}
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="user" value="{{ .Model.ID }}"
+                        id="listAccountRadio-{{ .Model.ID }}">
+                    <label class="form-check-label" for="listAccountRadio-{{ .Model.ID }}">
+                        {{ .Name }}
+                    </label>
+                </div>
+                {{ end }}
+                <button type="submit" class="btn btn-primary">列印</button>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="nav-asset" role="tabpanel" aria-labelledby="nav-asset-tab">
+            <form class="row align-items-center" method="post" action="/newAsset">
                 <div class="col-auto">
                     <label for="newTicker">代号</label>
                 </div>
@@ -30,7 +165,7 @@
                     <button type="submit" class="btn btn-primary">发行</button>
                 </div>
             </form>
-            <table class="table">
+            <table class="table table-striped" style="width: auto;">
                 <thead>
                     <tr>
                         <th scope="col">标的</th>
@@ -44,57 +179,6 @@
                     {{ end }}
                 </tbody>
             </table>
-        </div>
-        <div class="tab-pane fade" id="nav-user" role="tabpanel" aria-labelledby="nav-user-tab">
-            <form class="row align-items-center" method="post" action="newUser">
-                <div class="col-auto">
-                    <label for="newUser">户名</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="text" name="name" placeholder="user" id="newUser" required>
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">开户</button>
-                </div>
-            </form>
-            <form action="listAccount">
-                {{ range .users }}
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="user" value="{{ .Model.ID }}"
-                        id="listAccountRadion-{{ .Model.ID }}">
-                    <label class="form-check-label" for="listAccountRadion-{{ .Model.ID }}">
-                        {{ .Name }}
-                    </label>
-                </div>
-                {{ end }}
-                <button type="submit" class="btn btn-primary">列印</button>
-            </form>
-        </div>
-        <div class="tab-pane fade" id="nav-transfer" role="tabpanel" aria-labelledby="nav-transfer-tab">
-            <form class="row align-items-center" action="deposit" method="POST">
-                <div class="col-auto">
-                    <select class="form-select" id="depositUser" name="user" required>
-                        <option selected disabled value="">用户</option>
-                        {{ range .users }}
-                        <option value="{{.Model.ID}}">{{.Name}}</option>
-                        {{ end }}
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <select class="form-select" id="depositTicker" name="ticker" required>
-                        <option selected disabled value="">资产</option>
-                        {{ range .assets }}
-                        <option value="{{.Ticker}}">{{.Ticker}}</option>
-                        {{ end }}
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <input type="number" class="form-control" id="depositAmount" placeholder="100" name="amount" required>
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">入金</button>
-                </div>
-            </form>
         </div>
     </div>
 
