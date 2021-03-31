@@ -157,7 +157,8 @@ func main() {
 		} else if err := db.Find(&users).Error; err != nil &&
 			!errors.Is(err, gorm.ErrRecordNotFound) {
 			c.String(http.StatusInternalServerError, err.Error())
-		} else if err := db.Preload(clause.Associations).Find(&orders).Error; err != nil &&
+		} else if err := db.Preload(clause.Associations).
+			Find(&orders).Error; err != nil &&
 			!errors.Is(err, gorm.ErrRecordNotFound) {
 			c.String(http.StatusInternalServerError, err.Error())
 		} else {
@@ -166,6 +167,15 @@ func main() {
 				"users":  users,
 				"orders": orders,
 			})
+		}
+	})
+	r.GET("/listOrders", func(c *gin.Context) {
+		var orders []Order
+		if err := db.Preload(clause.Associations).Find(&orders).
+			Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			c.String(http.StatusInternalServerError, err.Error())
+		} else {
+			c.JSON(http.StatusOK, orders)
 		}
 	})
 	r.GET("/listAccount", func(c *gin.Context) {
