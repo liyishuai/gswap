@@ -120,10 +120,6 @@ func withdraw(wit Ticket, account *Account) func(*gorm.DB) error {
 	}
 }
 
-type Cancel struct {
-	OrderID uint `form:"order"`
-}
-
 type ListAccount struct {
 	UserID uint `form:"user"`
 }
@@ -260,8 +256,8 @@ func main() {
 					} else if err != nil {
 						return err
 					}
-					if err := debit(&seller, maker.SellAmount,
-						tx); err != nil {
+					if err := debit(&seller, maker.SellAmount, // bug here
+						tx); err != nil { // duplicated debit and withdraw
 						return err
 					} else {
 						order := &Order{
