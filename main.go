@@ -44,22 +44,22 @@ type Order struct {
 }
 
 type Taker struct {
-	UserID  uint `form:"user"`
-	OrderID uint `form:"order"`
+	UserID  uint `form:"user" binding:"required"`
+	OrderID uint `form:"order" binding:"required"`
 }
 
 type Maker struct {
-	UserID     uint   `form:"user"`
-	BuyTicker  string `form:"buyTicker"`
-	BuyAmount  uint   `form:"buyAmount"`
-	SellTicker string `form:"sellTicker"`
-	SellAmount uint   `form:"sellAmount"`
+	UserID     uint   `form:"user" binding:"required"`
+	BuyTicker  string `form:"buyTicker" binding:"required"`
+	BuyAmount  uint   `form:"buyAmount" binding:"required"`
+	SellTicker string `form:"sellTicker" binding:"required"`
+	SellAmount uint   `form:"sellAmount" binding:"required"`
 }
 
 type Ticket struct {
-	UserID uint   `form:"user"`
-	Ticker string `form:"ticker"`
-	Amount uint   `form:"amount"`
+	UserID uint   `form:"user" binding:"required"`
+	Ticker string `form:"ticker" binding:"required"`
+	Amount uint   `form:"amount" binding:"required"`
 }
 
 func credit(account *Account, amount uint, tx *gorm.DB) error {
@@ -121,7 +121,7 @@ func withdraw(wit Ticket, account *Account) func(*gorm.DB) error {
 }
 
 type ListAccount struct {
-	UserID uint `form:"user"`
+	UserID uint `form:"user" binding:"required"`
 }
 
 func main() {

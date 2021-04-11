@@ -8,14 +8,10 @@
 <body>
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="nav-order-tab" data-bs-toggle="tab" data-bs-target="#nav-order"
-                type="button" role="tab" aria-controls="nav-order" aria-selected="true">订单</button>
-            <button class="nav-link" id="nav-transfer-tab" data-bs-toggle="tab" data-bs-target="#nav-transfer"
-                type="button" role="tab" aria-controls="nav-transfer" aria-selected="false">动账</button>
-            <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-user" type="button"
-                role="tab" aria-controls="nav-user" aria-selected="false">用户</button>
-            <button class="nav-link" id="nav-asset-tab" data-bs-toggle="tab" data-bs-target="#nav-asset" type="button"
-                role="tab" aria-controls="nav-asset" aria-selected="false">标的</button>
+            <button class="nav-link active" id="nav-order-tab" data-bs-toggle="tab" data-bs-target="#nav-order" type="button" role="tab" aria-controls="nav-order" aria-selected="true">订单</button>
+            <button class="nav-link" id="nav-transfer-tab" data-bs-toggle="tab" data-bs-target="#nav-transfer" type="button" role="tab" aria-controls="nav-transfer" aria-selected="false">动账</button>
+            <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-user" type="button" role="tab" aria-controls="nav-user" aria-selected="false">用户</button>
+            <button class="nav-link" id="nav-asset-tab" data-bs-toggle="tab" data-bs-target="#nav-asset" type="button" role="tab" aria-controls="nav-asset" aria-selected="false">标的</button>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -52,16 +48,14 @@
                                     <option value="{{.Ticker}}">{{.Ticker}}</option>
                                     {{ end }}
                                 </select></td>
-                            <td><input type="number" class="form-control" id="buyAmount" placeholder="100"
-                                    name="buyAmount"></td>
+                            <td><input type="number" min="1" class="form-control" id="buyAmount" placeholder="100" name="buyAmount"></td>
                             <td><select class="form-select" id="sellTicker" name="sellTicker">
                                     <option selected disabled value="">代号</option>
                                     {{ range .assets }}
                                     <option value="{{.Ticker}}">{{.Ticker}}</option>
                                     {{ end }}
                                 </select></td>
-                            <td><input type="number" class="form-control" id="sellAmount" placeholder="100"
-                                    name="sellAmount"></td>
+                            <td><input type="number" min="1" class="form-control" id="sellAmount" placeholder="100" name="sellAmount"></td>
                             <td><button type="submit" formaction="/makeOrder" class="btn btn-primary">挂单</button></td>
                         </tr>
                         {{ range .orders }}
@@ -71,8 +65,7 @@
                             <td>{{ .Seller.AssetTicker }}</td>
                             <td>{{ .SellAmount }}</td>
                             <td>
-                                <button type="submit" formaction="/takeOrder" name="order" value="{{ .Model.ID }}"
-                                    class="btn btn-secondary">吃单</button>
+                                <button type="submit" formaction="/takeOrder" name="order" value="{{ .Model.ID }}" class="btn btn-secondary">吃单</button>
                             </td>
                         </tr>
                         {{ end }}
@@ -115,8 +108,7 @@
                         <label for="transferAmount">数额</label>
                     </div>
                     <div class="col-auto">
-                        <input type="number" class="form-control" id="transferAmount" placeholder="100" name="amount"
-                            required>
+                        <input type="number" min="1" class="form-control" id="transferAmount" placeholder="100" name="amount" required>
                     </div>
                 </div>
                 <div class="row align-items-center">
@@ -144,8 +136,7 @@
             <form action="/listAccount">
                 {{ range .users }}
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="user" value="{{ .Model.ID }}"
-                        id="listAccountRadio-{{ .Model.ID }}">
+                    <input class="form-check-input" type="radio" name="user" value="{{ .Model.ID }}" id="listAccountRadio-{{ .Model.ID }}">
                     <label class="form-check-label" for="listAccountRadio-{{ .Model.ID }}">
                         {{ .Name }}
                     </label>
@@ -160,8 +151,7 @@
                     <label for="newTicker">代号</label>
                 </div>
                 <div class="col-auto">
-                    <input class="form-control" type="text" name="ticker" maxlength="3" placeholder="CNY" id="newTicker"
-                        required>
+                    <input class="form-control" type="text" name="ticker" maxlength="3" placeholder="CNY" id="newTicker" required>
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary">发行</button>
