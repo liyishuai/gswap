@@ -140,6 +140,8 @@ func main() {
 	})
 	if err != nil {
 		log.Fatalf("Error opening Gorm database: %q", err)
+	} else {
+		db.AutoMigrate(&User{}, &Asset{}, &Account{}, &Order{})
 	}
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.tmpl.html")
