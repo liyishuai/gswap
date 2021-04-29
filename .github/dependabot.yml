@@ -4,12 +4,3 @@ updates:
   directory: "/"
   schedule:
     interval: daily
-    time: "09:00"
-    timezone: America/New_York
-  pull-request-branch-name:
-    separator: "-"
-  open-pull-requests-limit: 99
-  ignore:
-  - dependency-name: gorm.io/gorm
-    versions:
-    - 1.21.5
