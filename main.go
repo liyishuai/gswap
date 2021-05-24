@@ -173,7 +173,7 @@ func main() {
 			Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			c.String(http.StatusInternalServerError, err.Error())
 		} else {
-			c.JSON(http.StatusOK, orders)
+			c.JSON(http.StatusOK, gin.H{"orders": orders})
 		}
 	})
 	r.GET("/listAccount", func(c *gin.Context) {
@@ -184,7 +184,7 @@ func main() {
 				Error; err != nil {
 				c.String(http.StatusInternalServerError, err.Error())
 			} else {
-				c.JSON(http.StatusOK, accounts)
+				c.JSON(http.StatusOK, gin.H{"accounts": accounts})
 			}
 		}
 	})
