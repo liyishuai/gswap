@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/lib/pq v1.10.7
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	gorm.io/driver/postgres v1.4.5
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gorm.io/driver/postgres v1.4.6
 	gorm.io/gorm v1.24.3
 )
