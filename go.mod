@@ -5,7 +5,7 @@ go 1.25.0
 
 require (
 	github.com/gin-gonic/gin v1.12.0
-	github.com/lib/pq v1.12.1
+	github.com/lib/pq v1.12.3
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
 )
